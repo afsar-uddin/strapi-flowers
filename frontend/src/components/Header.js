@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
 
 const CATEGORIES = gql`
@@ -22,11 +22,11 @@ export default function Header() {
 
     return (
         <div className='header'>
-            <Link to="/">Front page</Link>
+            <Link to="/">All Collection</Link>
             {
                 data.categories.data.map(category => (
                     // console.log(category.id)
-                    <Link key={category.id} to={`/category/${category.id}`}>{category.attributes.categoryName}</Link>
+                    <NavLink key={category.id} to={`/category/${category.id}`}>{category.attributes.categoryName}</NavLink>
                 ))
             }
         </div>

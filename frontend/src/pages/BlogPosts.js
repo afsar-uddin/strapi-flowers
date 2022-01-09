@@ -1,6 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import ReactStars from "react-rating-stars-component";
 
 const BLOGS = gql`
     query{
@@ -42,37 +43,46 @@ const BLOGS = gql`
 
 export default function BlogPosts() {
     const { loading, error, data } = useQuery(BLOGS)
-
-    // console.log(data.blogs.data.length)
     if (loading) return <p>Loading...</p>
     if (error) return <p>There is something wrong, check your data again...  </p>
     return (
-        <div className='blog-posts'>
-            <h1>Total {data.blogs.data.length} items</h1>
-            {
-                data.blogs.data.map(blog => (
-                    // console.log(blog.attributes.title)
-                    <div key={blog.id} className='blog-card'>
-                        {/* {console.log(blog.attributes.fig.data.attributes.formats.thumbnail.url)} */}
-                        <div className='rating'>{blog.attributes.rating}</div>
-                        <div className='blog-content'>
+        <div className='page-content'>
+            <h2>Seasonal Flowers</h2>
+            <div className='blog-posts'>
+
+                {
+                    data.blogs.data.map(blog => (
+                        <div key={blog.id} className='blog-card'>
+                            <div className='categories'>
+                                {
+                                    blog.attributes.categories.data.map(c => (
+                                        <small key={c.id}>Category : {c.attributes.categoryName}</small>
+                                    ))
+                                }
+                            </div>
                             <div className='blog-detail'>
-                                <h2>{blog.attributes.title}</h2>
-                                <div className='categories'>
-                                    {
-                                        blog.attributes.categories.data.map(c => (
-                                            <small key={c.id}>{c.attributes.categoryName}</small>
-                                        ))
-                                    }
+                                <div className='blog-fig'>
+                                    <div className='rating'>
+                                        <ReactStars
+                                            count={blog.attributes.rating}
+                                            color="#ffd700"
+                                        />
+                                    </div>
+                                    <Link to={`/blog-detail/${blog.id}`}>
+                                        <img src={`http://localhost:1337${blog.attributes.fig.data.attributes.url}`} />
+                                    </Link>
+
                                 </div>
-                                <img src={`http://localhost:1337${blog.attributes.fig.data.attributes.url}`} />
-                                <p>{blog.attributes.desc.substring(0, 40)}...</p>
-                                <Link to={`/blog-detail/${blog.id}`}>View more</Link>
+                                <div className='content'>
+                                    <h2>{blog.attributes.title}</h2>
+                                    <p>{blog.attributes.desc.substring(0, 40)}...</p>
+                                    <Link to={`/blog-detail/${blog.id}`}>View more</Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))
-            }
-        </div >
+                    ))
+                }
+            </div >
+        </div>
     )
 }
